@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
 
 FROM base AS deps
 WORKDIR /app
@@ -7,8 +7,10 @@ RUN npm ci
 
 FROM base AS builder
 WORKDIR /app
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN npm rebuild better-sqlite3
 RUN npm run build
 RUN [ -f db.sqlite ] && npx tsx server.ts || true
 RUN npx tsx --tsconfig tsconfig.json -e "console.log('compile check')"
@@ -28,6 +30,7 @@ COPY --from=builder /app/server.ts ./server.ts
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 
 RUN mkdir -p /app/data && chown mcpsshub:nodejs /app/data
 VOLUME /app/data
@@ -35,4 +38,6 @@ VOLUME /app/data
 USER mcpsshub
 EXPOSE 3000
 
-CMD ["npx", "tsx", "server.ts"]
+ENV DB_PATH=/app/data/mcpsshub.db
+
+CMD ["sh", "-c", "npx drizzle-kit push && npx tsx server.ts"]
