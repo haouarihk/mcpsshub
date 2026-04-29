@@ -9,32 +9,20 @@ mcpsshub is an open‑source, MIT‑licensed project that provides a lightweight
 - **Secure authentication** – Uses token‑based auth stored in cookies or as a query parameter.
 - **Simple setup** – One Docker compose file, one `npm run dev` command, or a single shell script to install the agent on any host.
 
-## Quick Start
-```bash
-# 1. Clone the repo and install deps
-git clone https://github.com/youruser/mcpsshub.git
-cd mcpsshub
-pnpm i
-
-# 2. Build and push the Docker image via GitHub Actions (see .github/workflows/docker.yml)
-#    The image will be published to ghcr.io/<OWNER>/mcpsshub:latest
-
-# 3. Deploy using Docker Compose with the image from GHCR
-cat <<'EOF' > docker-compose.yml
-version: '3'
+## Quick Start (Docker-compose)
+```yml
 services:
   mcpsshub:
-    image: ghcr.io/${{ github.repository_owner }}/mcpsshub:latest
+    image: ghcr.io/haouarihk/mcpsshub:latest
     ports:
       - "3000:3000"
     environment:
       DB_PATH: /app/data/mcpsshub.db
     volumes:
-      - ./data:/app/data
-EOF
+      - mcpsshub-data:/app/data
 
-docker compose up -d
-```
+volumes:
+  mcpsshub-data:
 ```
 
 ### Using the Agent Script
