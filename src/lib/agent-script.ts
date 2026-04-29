@@ -48,7 +48,7 @@ if ! check_node; then
   install_node
 fi
 
-AGENT_DIR="${HOME}/mcpsshub"
+AGENT_DIR="${process.env.HOME}/mcpsshub"
 NODE_PATH="\${AGENT_DIR}/node_modules"
 
 # Check for ws package, install if missing

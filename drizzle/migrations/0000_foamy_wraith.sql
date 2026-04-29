@@ -44,12 +44,14 @@ CREATE TABLE `servers` (
 	`ip` text,
 	`os` text,
 	`agent_token` text NOT NULL,
+	`script_token` text DEFAULT '' NOT NULL,
 	`status` text DEFAULT 'offline' NOT NULL,
 	`last_seen` integer,
 	`created_at` integer NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `servers_agent_token_unique` ON `servers` (`agent_token`);--> statement-breakpoint
+CREATE UNIQUE INDEX `servers_script_token_unique` ON `servers` (`script_token`);--> statement-breakpoint
 CREATE TABLE `settings` (
 	`key` text PRIMARY KEY NOT NULL,
 	`value` text NOT NULL

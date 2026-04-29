@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "617883f5-63a5-43bd-b360-85c1260990d5",
+  "id": "7fa3de0c-6f10-4438-bbf9-4bfc9ae13f14",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "command_history": {
@@ -313,6 +313,14 @@
           "notNull": true,
           "autoincrement": false
         },
+        "script_token": {
+          "name": "script_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
         "status": {
           "name": "status",
           "type": "text",
@@ -341,6 +349,13 @@
           "name": "servers_agent_token_unique",
           "columns": [
             "agent_token"
+          ],
+          "isUnique": true
+        },
+        "servers_script_token_unique": {
+          "name": "servers_script_token_unique",
+          "columns": [
+            "script_token"
           ],
           "isUnique": true
         }

@@ -10,6 +10,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
+RUN [ -f db.sqlite ] && npx tsx server.ts || true
 RUN npx tsx --tsconfig tsconfig.json -e "console.log('compile check')"
 
 FROM base AS runner
