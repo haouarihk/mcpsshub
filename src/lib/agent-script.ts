@@ -24,7 +24,8 @@ check_node() {
 }
 
 install_node() {
-  echo "[remoteclaw] Node.js not found, installing..."
+   echo "[mcpsshub] Node.js not found, installing..."
+
   if command -v apt-get &>/dev/null; then
     sudo apt-get update -qq && sudo apt-get install -y -qq nodejs npm
   elif command -v yum &>/dev/null; then
@@ -34,8 +35,10 @@ install_node() {
   elif command -v brew &>/dev/null; then
     brew install node
   else
-    echo "[remoteclaw] ERROR: Cannot install Node.js automatically."
-    echo "[remoteclaw] Please install Node.js and run this script again."
+     echo "[mcpsshub] ERROR: Cannot install Node.js automatically."
+
+     echo "[mcpsshub] Please install Node.js and run this script again."
+
     exit 1
   fi
   NODE_BIN="node"
@@ -45,22 +48,24 @@ if ! check_node; then
   install_node
 fi
 
+AGENT_DIR="\${HOME}/remoteclaw"
+NODE_PATH="\${AGENT_DIR}/node_modules"
+
 # Check for ws package, install if missing
-if ! $NODE_BIN -e "require('ws')" 2>/dev/null; then
-  echo "[remoteclaw] Installing ws package..."
-  AGENT_DIR="\${HOME}/.remoteclaw"
+if ! NODE_PATH="\${NODE_PATH}" $NODE_BIN -e "require('ws')" 2>/dev/null; then
+     echo "[mcpsshub] Installing ws package..."
+
   mkdir -p "\${AGENT_DIR}"
   cd "\${AGENT_DIR}"
-  npm init -y --silent 2>/dev/null
-  npm install ws --silent 2>/dev/null
+  npm init -y --silent 2>/dev/null || npm init -y
+  npm install ws 2>&1 || { echo "[mcpsshub] npm install failed"; exit 1; }
   cd - >/dev/null
-  NODE_PATH="\${AGENT_DIR}/node_modules"
-  export NODE_PATH
 fi
 
-echo "[remoteclaw] Starting agent..."
+     echo "[mcpsshub] Starting agent..."
 
-$NODE_BIN -e '
+
+NODE_PATH="\${NODE_PATH}" $NODE_BIN -e '
 const WebSocket = require("ws");
 const os = require("os");
 const { execSync, spawn } = require("child_process");
@@ -84,8 +89,10 @@ function getIP() {
 function connect() {
   ws = new WebSocket(WS_URL);
 
-  ws.on("open", () => {
-    console.log("[remoteclaw] Connected to server");
+    ws.on("open", () => {
+      console.log("[mcpsshub] Connected to server");
+
+
     reconnectDelay = 1000;
 
     ws.send(JSON.stringify({
@@ -106,7 +113,7 @@ function connect() {
 
       if (msg.type === "command_request" && msg.commandId && msg.data) {
         const { command, timeout = 30000 } = msg.data;
-        console.log("[remoteclaw] Executing:", command);
+        console.log("[mcpsshub] Executing:", command);
 
         try {
           const output = execSync(command, {
@@ -135,25 +142,27 @@ function connect() {
         ws.send(JSON.stringify({ type: "heartbeat" }));
       }
     } catch (e) {
-      console.error("[remoteclaw] Parse error:", e.message);
+      console.error("[mcpsshub] Parse error:", e.message);
     }
   });
 
-  ws.on("close", () => {
-    console.log("[remoteclaw] Disconnected. Reconnecting in " + (reconnectDelay / 1000) + "s...");
+    ws.on("close", () => {
+      console.log("[mcpsshub] Disconnected. Reconnecting in " + (reconnectDelay / 1000) + "s...");
+
     setTimeout(connect, reconnectDelay);
     reconnectDelay = Math.min(reconnectDelay * 2, 30000);
   });
 
   ws.on("error", (err) => {
-    console.error("[remoteclaw] Error:", err.message);
+     console.error("[mcpsshub] Error:", err.message);
+
   });
 }
 
 connect();
 
 process.on("SIGINT", () => {
-  console.log("[remoteclaw] Shutting down...");
+  console.log("[mcpsshub] Shutting down...");
   if (ws) ws.close();
   process.exit(0);
 });
