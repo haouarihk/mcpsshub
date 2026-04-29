@@ -32,6 +32,24 @@ interface AccessEntry {
   };
 }
 
+const EXAMPLE_TOOLS = [
+  { id: "claude", label: "Claude Code / Desktop" },
+  { id: "opencode", label: "OpenCode" },
+] as const;
+
+type ExampleTool = (typeof EXAMPLE_TOOLS)[number]["id"];
+
+function getExample(tool: ExampleTool, url: string) {
+  switch (tool) {
+    case "opencode":
+      return `{\n  "mcpServers": {\n    "mcpsshub": {\n      "transport": "streamable-http",\n      "url": "${url}"\n    }\n  }\n}`;
+
+    case "claude":
+    default:
+      return `claude mcp add mcpsshub --transport http ${url}`;
+  }
+}
+
 const defaultAbilities = {
   executeCommand: true,
   readOutput: true,
@@ -50,6 +68,7 @@ export default function EndpointDetailPage({
   const [endpoint, setEndpoint] = useState<Endpoint | null>(null);
   const [servers, setServers] = useState<Server[]>([]);
   const [access, setAccess] = useState<AccessEntry[]>([]);
+  const [selectedTool, setSelectedTool] = useState<ExampleTool>("claude");
 
   const fetchEndpoint = useCallback(async () => {
     const res = await fetch(`/api/endpoints/${id}`);
@@ -158,15 +177,30 @@ export default function EndpointDetailPage({
             </code>
             <CopyButton text={mcpUrl} />
           </div>
-          <p className="text-xs text-gray-600 mt-3">
-            For Claude Code, add this to your MCP config or run:
-          </p>
-          <div className="flex gap-2 items-center mt-1">
-            <code className="flex-1 bg-gray-950 rounded p-2 text-xs text-gray-400 break-all">
-              claude mcp add remoteclaw --transport http {mcpUrl}
-            </code>
+          <div className="flex gap-2 items-center mb-3">
+            <label className="text-xs text-gray-400">Example for:</label>
+            <select
+              value={selectedTool}
+              onChange={(e) => setSelectedTool(e.target.value as ExampleTool)}
+              className="bg-gray-800 border border-gray-700 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
+            >
+              {EXAMPLE_TOOLS.map((t) => (
+                <option key={t.id} value={t.id}>{t.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex gap-2 items-center">
+            {selectedTool === "opencode" ? (
+              <pre className="flex-1 bg-gray-950 rounded p-2 text-xs text-gray-400 overflow-x-auto">
+                {getExample(selectedTool, mcpUrl)}
+              </pre>
+            ) : (
+              <code className="flex-1 bg-gray-950 rounded p-2 text-xs text-gray-400 break-all">
+                {getExample(selectedTool, mcpUrl)}
+              </code>
+            )}
             <CopyButton
-              text={`claude mcp add remoteclaw --transport http ${mcpUrl}`}
+              text={getExample(selectedTool, mcpUrl)}
               label="Copy"
               className="text-xs"
             />

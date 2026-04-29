@@ -15,6 +15,7 @@ export async function GET(request: Request) {
     ...s,
     status: connectionManager.isOnline(s.id) ? "online" : "offline",
     agentToken: undefined,
+    scriptToken: undefined,
   }));
 
   return NextResponse.json(result);
@@ -27,6 +28,7 @@ export async function POST(request: Request) {
   const body = await request.json();
   const id = generateId();
   const agentToken = generateToken();
+  const scriptToken = generateToken(24);
 
   const server = {
     id,
@@ -35,6 +37,7 @@ export async function POST(request: Request) {
     ip: null,
     os: null,
     agentToken,
+    scriptToken,
     status: "offline" as const,
     lastSeen: null,
     createdAt: new Date(),
@@ -42,5 +45,5 @@ export async function POST(request: Request) {
 
   db.insert(servers).values(server).run();
 
-  return NextResponse.json({ ...server, agentToken }, { status: 201 });
+  return NextResponse.json({ ...server, agentToken, scriptToken }, { status: 201 });
 }

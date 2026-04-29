@@ -30,6 +30,20 @@ app.prepare().then(() => {
     console.log(`\n  Admin token (save this): ${token}\n`);
   }
 
+  // Migrate existing servers without scriptToken
+  const serversNeedingToken = db
+    .select()
+    .from(servers)
+    .where(eq(servers.scriptToken, ""))
+    .all();
+
+  for (const server of serversNeedingToken) {
+    db.update(servers)
+      .set({ scriptToken: generateToken(24) })
+      .where(eq(servers.id, server.id))
+      .run();
+  }
+
   // MCP routes
   setupMcpRoutes(expressApp);
 

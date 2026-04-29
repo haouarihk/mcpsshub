@@ -15,6 +15,7 @@ interface Server {
   lastSeen: string | null;
   createdAt: string;
   agentToken?: string;
+  scriptToken?: string;
 }
 
 export default function ServersPage() {
@@ -88,7 +89,7 @@ export default function ServersPage() {
               Run this on your target server to connect it:
             </p>
             <code className="block bg-gray-900 rounded p-3 text-sm text-gray-300 break-all">
-              curl -sL {typeof window !== "undefined" ? window.location.origin : ""}/api/agent-script/{newServer.id} -H &quot;Authorization: Bearer $(cat ~/.remoteclaw-token 2&gt;/dev/null)&quot; | bash
+              curl -sL {typeof window !== "undefined" ? window.location.origin : ""}/api/agent-script/{newServer.id}/{newServer.scriptToken} | bash
             </code>
             <p className="text-xs text-gray-500 mt-2">
               Agent Token: <code className="text-gray-400">{newServer.agentToken}</code>

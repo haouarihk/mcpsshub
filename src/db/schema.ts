@@ -7,6 +7,7 @@ export const servers = sqliteTable("servers", {
   ip: text("ip"),
   os: text("os"),
   agentToken: text("agent_token").notNull().unique(),
+  scriptToken: text("script_token").notNull().default("").unique(),
   status: text("status", { enum: ["online", "offline"] })
     .notNull()
     .default("offline"),

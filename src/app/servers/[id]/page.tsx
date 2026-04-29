@@ -15,6 +15,7 @@ interface Server {
   status: string;
   lastSeen: string | null;
   agentToken: string;
+  scriptToken: string;
 }
 
 interface Rule {
@@ -86,7 +87,7 @@ export default function ServerDetailPage({
   if (loading || !authenticated) return null;
   if (!server) return null;
 
-  const scriptUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/api/agent-script/${server.id}`;
+  const scriptUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/api/agent-script/${server.id}/${server.scriptToken}`;
 
   return (
     <>
@@ -135,10 +136,10 @@ export default function ServerDetailPage({
           </p>
           <div className="flex gap-2 items-start">
             <code className="flex-1 bg-gray-950 rounded p-3 text-sm text-gray-300 break-all">
-              curl -sL &apos;{scriptUrl}&apos; -H &apos;Authorization: Bearer YOUR_ADMIN_TOKEN&apos; | bash
+              curl -sL &apos;{scriptUrl}&apos; | bash
             </code>
             <CopyButton
-              text={`curl -sL '${scriptUrl}' -H 'Authorization: Bearer YOUR_ADMIN_TOKEN' | bash`}
+              text={`curl -sL '${scriptUrl}' | bash`}
             />
           </div>
           <p className="text-xs text-gray-600 mt-2">

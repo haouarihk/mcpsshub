@@ -5,6 +5,12 @@ import { useAuth } from "@/components/auth-provider";
 import { Nav } from "@/components/nav";
 import Link from "next/link";
 
+const EXAMPLE_TEMPLATES = [
+  { label: "Custom endpoint", name: "" },
+  { label: "OpenCode", name: "OpenCode" },
+  { label: "Claude Desktop", name: "Claude Desktop" },
+];
+
 interface Endpoint {
   id: string;
   name: string;
@@ -16,8 +22,16 @@ interface Endpoint {
 export default function EndpointsPage() {
   const { authenticated, loading } = useAuth();
   const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(0);
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
+
+  const handleTemplateChange = (index: number) => {
+    setSelectedTemplate(index);
+    if (EXAMPLE_TEMPLATES[index].name) {
+      setName(EXAMPLE_TEMPLATES[index].name);
+    }
+  };
 
   const fetchEndpoints = useCallback(async () => {
     const res = await fetch("/api/endpoints");
@@ -60,6 +74,15 @@ export default function EndpointsPage() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-semibold">MCP Endpoints</h1>
           <div className="flex gap-2">
+            <select
+              value={selectedTemplate}
+              onChange={(e) => handleTemplateChange(Number(e.target.value))}
+              className="bg-gray-900 border border-gray-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500"
+            >
+              {EXAMPLE_TEMPLATES.map((t, i) => (
+                <option key={i} value={i}>{t.label}</option>
+              ))}
+            </select>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
