@@ -1,0 +1,15 @@
+services:
+  mcpsshub:
+    build: .
+    expose:
+      - 3000
+    volumes:
+      - mcpsshub-data:/app/data
+    env_file:
+      - .env
+    environment:
+      - DB_PATH=/app/data/mcpsshub.db
+    restart: unless-stopped
+
+volumes:
+  mcpsshub-data:
