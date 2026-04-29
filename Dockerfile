@@ -17,7 +17,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 remoteclaw
+    adduser --system --uid 1001 mcpsshub
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
@@ -28,10 +28,10 @@ COPY --from=builder /app/src ./src
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/package.json ./package.json
 
-RUN mkdir -p /app/data && chown remoteclaw:nodejs /app/data
+RUN mkdir -p /app/data && chown mcpsshub:nodejs /app/data
 VOLUME /app/data
 
-USER remoteclaw
+USER mcpsshub
 EXPOSE 3000
 
 CMD ["npx", "tsx", "server.ts"]

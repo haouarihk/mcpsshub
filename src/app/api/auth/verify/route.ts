@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set("remoteclaw_token", token, {
+  cookieStore.set("mcpsshub_token", token, {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
   }
 
   const cookieStore = await cookies();
-  const cookieToken = cookieStore.get("remoteclaw_token")?.value;
+  const cookieToken = cookieStore.get("mcpsshub_token")?.value;
 
   return NextResponse.json({
     authenticated: cookieToken === adminToken,

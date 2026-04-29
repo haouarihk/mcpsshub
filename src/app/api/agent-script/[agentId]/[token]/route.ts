@@ -29,7 +29,7 @@ export async function GET(
   return new NextResponse(script, {
     headers: {
       "Content-Type": "text/plain",
-      "Content-Disposition": "attachment; filename=\"install-remoteclaw.sh\"",
+      "Content-Disposition": "attachment; filename=\"install-mcpsshub.sh\"",
     },
   });
 }

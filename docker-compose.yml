@@ -1,15 +1,15 @@
 services:
-  remoteclaw:
+  mcpsshub:
     build: .
     ports:
       - "3000:3000"
     volumes:
-      - remoteclaw-data:/app/data
+      - mcpsshub-data:/app/data
     environment:
-      - DB_PATH=/app/data/remoteclaw.db
+      - DB_PATH=/app/data/mcpsshub.db
       - PORT=3000
       - HOST_URL=http://localhost:3000
     restart: unless-stopped
 
 volumes:
-  remoteclaw-data:
+  mcpsshub-data:

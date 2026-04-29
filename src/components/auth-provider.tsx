@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     document.cookie =
-      "remoteclaw_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      "mcpsshub_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     setAuthenticated(false);
     router.push("/login");
   };

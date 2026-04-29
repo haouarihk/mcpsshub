@@ -4,7 +4,7 @@ import * as schema from "./schema";
 import { existsSync, mkdirSync } from "fs";
 import { dirname } from "path";
 
-const dbPath = process.env.DB_PATH || "./data/remoteclaw.db";
+const dbPath = process.env.DB_PATH || "./data/mcpsshub.db";
 const dir = dirname(dbPath);
 if (!existsSync(dir)) {
   mkdirSync(dir, { recursive: true });

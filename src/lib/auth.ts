@@ -25,7 +25,7 @@ export async function verifyAuth(request: Request): Promise<boolean> {
 
   // Check cookie
   const cookieStore = await cookies();
-  const cookieToken = cookieStore.get("remoteclaw_token")?.value;
+  const cookieToken = cookieStore.get("mcpsshub_token")?.value;
   if (cookieToken === adminToken) return true;
 
   return false;
